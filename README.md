@@ -21,7 +21,7 @@ Event Konnect is a Rwanda-based innovative digital platform that simplifies and 
 2. **Install Dependencies**:
 
    ```bash
-   npm install
+   yarn install
    ```
 3. **Run Linting & formating**:
    ```bash
@@ -38,7 +38,7 @@ Event Konnect is a Rwanda-based innovative digital platform that simplifies and 
 1. Fork the Repository
 2. Create a new branch (feature/new-feature)
 3. Commit feature
-4. Push on Repo and open Pull Request to develop
+4. Push on Repository and open Pull Request to develop
 
 ## Licence
 
