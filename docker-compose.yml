@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:14
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: eventKonnect
+    volumes:
+      - app_data:/var/lib/postgresql/data
+
+
+volumes:
+  app_data:
+networks:
+  app-network:
+
+
+  
+
+
