@@ -1,17 +1,13 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { SignupDto } from './signup.dto';
+import { IsOptional, IsString } from 'class-validator';
 
-export class AttendeeSignupDto {
-  @IsString()
-  @IsNotEmpty()
-  username: string;
-
-  @IsEmail()
-  email: string;
-
-  @IsString()
-  password: string;
-
+export class AttendeeSignupDto extends SignupDto {
   @IsString()
   @IsOptional()
-  phone?: string;
+  @ApiProperty({
+    description: 'Ticket type (e.g., VIP, Regular)',
+    required: false,
+  })
+  ticketType?: string;
 }
