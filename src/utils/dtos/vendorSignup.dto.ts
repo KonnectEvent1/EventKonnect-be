@@ -1,36 +1,41 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Matches,
-  MinLength,
-} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
+import { SignupDto } from './signup.dto';
 
-export class VendorSignupDto {
+export class VendorSignupDto extends SignupDto {
   @IsString()
-  @IsNotEmpty()
-  username: string;
-
-  @IsEmail()
-  email: string;
-
-  @IsString()
-  @MinLength(8, { message: 'Password must be at least 8 characters long' })
-  @Matches(/(?=.*[!@#$%^&*(),.?":{}|<>])/, {
-    message: 'Password must contain at least one special character',
+  @IsOptional()
+  @ApiProperty({
+    description: 'Company name',
+    required: false,
+    example: 'Tresor Events',
   })
-  password: string;
-
-  @IsString()
-  @IsOptional()
-  phone?: string;
-
-  @IsString()
-  @IsOptional()
   companyName?: string;
 
   @IsString()
   @IsOptional()
+  @ApiProperty({
+    description: 'Address',
+    required: false,
+    example: 'Kigali, Rwanda',
+  })
   address?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Service category',
+    required: false,
+    example: 'Catering',
+  })
+  category?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Service area',
+    required: false,
+    example: 'Kigali',
+  })
+  serviceArea?: string;
 }

@@ -15,26 +15,32 @@ enum RSVPStatus {
 }
 
 model User {
-  id             String    @id @default(uuid())
-  username       String    @unique
-  email          String    @unique
-  password       String
-  phone          String?
-  companyName    String?
-  address        String?
-  userToken      String?
-  isDeleted      Boolean   @default(false)
-  isProfileSet   Boolean   @default(false)
-  isSuspended    Boolean   @default(false)
-  isVerified     Boolean   @default(false)
+  id                String    @id @default(uuid())
+  username          String    @unique
+  email             String    @unique
+  password          String
+  phone             String?
+  companyName       String?   
+  address           String?
+  organisationName  String?   
+  companyWebsite    String?   
+  category          String?   
+  serviceArea       String?   
+  ticketType        String?   
+  userToken         String?
+  isDeleted         Boolean   @default(false)
+  isProfileSet      Boolean   @default(false)
+  isSuspended       Boolean   @default(false)
+  isVerified        Boolean   @default(false)
   verificationToken String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  roleId         String?
-  role           Role?     @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  organizedEvents Event[]  @relation("OrganizedEvents")
-  userEvents Event[]  @relation("EventAttendees")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  roleId            String?
+  role              Role?     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  organizedEvents   Event[]   @relation("OrganizedEvents")
+  userEvents        Event[]   @relation("EventAttendees")
 }
+
 
 model Role {
   id        String   @id @default(uuid())
