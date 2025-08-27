@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
-import { VendorSignupDto } from 'src/utils/dtos/vendorSignup.dto';
-import { OrganiserSignupDto } from 'src/utils/dtos/organiserSignup.dto';
-import { AttendeeSignupDto } from 'src/utils/dtos/attendeeSignup.dto';
-import { Role } from 'src/utils/enums';
+import { VendorSignupDto } from 'src/utils/dtos';
+import { OrganiserSignupDto } from 'src/utils/dtos';
+import { AttendeeSignupDto } from 'src/utils/dtos';
+import { ROLES } from 'src/utils/enums';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -13,6 +14,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { loginDto } from 'src/utils/dtos';
 
 @ApiTags('Auth')
 @ApiResponse({
@@ -32,7 +34,7 @@ export class AuthController {
   })
   @Post('signup/vendor')
   vendorSignup(@Body() dto: VendorSignupDto) {
-    return this.authService.signup(dto, Role.VENDOR);
+    return this.authService.signup(dto, ROLES.VENDOR);
   }
 
   @Post('signup/organiser')
@@ -44,7 +46,7 @@ export class AuthController {
     description: 'Invalid data provided',
   })
   organiserSignup(@Body() dto: OrganiserSignupDto) {
-    return this.authService.signup(dto, Role.ORGANIZER);
+    return this.authService.signup(dto, ROLES.ORGANIZER);
   }
 
   @Post('signup/attendee')
@@ -56,7 +58,7 @@ export class AuthController {
     description: 'Succesfully created attendee ',
   })
   attendeeSignup(@Body() dto: AttendeeSignupDto) {
-    return this.authService.signup(dto, Role.ATTENDEE);
+    return this.authService.signup(dto, ROLES.ATTENDEE);
   }
 
   @Get('verify-email')
@@ -72,5 +74,35 @@ export class AuthController {
   })
   async verifyEmail(@Query('token') token: string) {
     return this.authService.verifyEmail(token);
+  }
+
+  @Post('login')
+  @ApiOperation({ summary: 'user login' })
+  @ApiOkResponse({
+    description: 'user retrieved successfully',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid data provided',
+  })
+  @ApiNotFoundResponse({
+    description: 'user was not found',
+  })
+  async login(
+    @Body() dto: loginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token = await this.authService.login(dto);
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 1000 * 60 * 60 * 3,
+    });
+
+    return {
+      message: 'Successfully Signed In',
+      data: token,
+      error: '',
+    };
   }
 }
