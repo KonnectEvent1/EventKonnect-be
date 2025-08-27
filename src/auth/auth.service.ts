@@ -1,17 +1,23 @@
-// src/auth/auth.service.ts
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/primsa/primsa.service';
 import * as bcrypt from 'bcrypt';
 import { CustomResponse } from 'src/utils/response/customResponse';
-import { Role } from 'src/utils/enums';
+import { ROLES } from 'src/utils/enums';
 import { v4 as uuid } from 'uuid';
 import { MailService } from 'src/email/mail.service';
+import { loginDto } from 'src/utils/dtos/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private mailservice: MailService,
+    private jwt: JwtService,
   ) {}
 
   /**
@@ -23,13 +29,13 @@ export class AuthService {
    * - Sends verification/change-password email depending on role
    *
    * @param dto - Incoming user data
-   * @param roleName - Role of the user (Vendor | Attendee | Organizer)
+   * @param roleName - ROLES of the user (Vendor | Attendee | Organizer)
    * @returns CustomResponse containing created user info
    */
 
   async signup(
     dto: any,
-    roleName: Role.VENDOR | Role.ATTENDEE | Role.ORGANIZER,
+    roleName: ROLES.VENDOR | ROLES.ATTENDEE | ROLES.ORGANIZER,
   ): Promise<CustomResponse<any>> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -60,13 +66,20 @@ export class AuthService {
           verificationToken,
           roleId: user_role.id,
         },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          roleId: true,
+          createdAt: true,
+        },
       });
 
       return [user_role, user];
     });
 
     try {
-      if (roleName === Role.VENDOR) {
+      if (roleName === ROLES.VENDOR) {
         await this.mailservice.sendVerificationEmail(
           dto.email,
           verificationToken,
@@ -87,7 +100,7 @@ export class AuthService {
 
     return {
       message:
-        roleName === Role.VENDOR
+        roleName === ROLES.VENDOR
           ? 'Vendor account created successfully. Please check your email to set your password.'
           : `${roleName} account created successfully. Please verify your email.`,
       data: {
@@ -138,5 +151,32 @@ export class AuthService {
         isVerified: true,
       },
     };
+  }
+
+  /**
+   * Login a user's email and  Password .
+   * - Verify if user exist
+   * - Generate a jwt token for each  user
+   * - Clears verification token
+   *
+   * @param {loginDto} - Verification token received from email
+   * @returns CustomResponse with user token after verification
+   */
+
+  async login(dto: loginDto): Promise<string> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: dto.email,
+      },
+    });
+    if (!user) throw new ForbiddenException('User not found');
+    const isPasswordValid = await bcrypt.compare(dto.password, user.password);
+    if (!isPasswordValid) throw new Error('Invalid credentials');
+    const token = this.jwt.sign({
+      sub: user.id,
+      email: user.email,
+      role: user.roleId,
+    });
+    return token;
   }
 }

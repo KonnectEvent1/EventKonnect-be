@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
-import { Role } from 'src/utils/enums';
+import { ROLES } from 'src/utils/enums';
 
 @Injectable()
 export class MailService {
@@ -24,7 +24,7 @@ export class MailService {
     let subject: string;
     let body: string;
 
-    if (role === Role.VENDOR) {
+    if (role === ROLES.VENDOR) {
       const changePasswordLink = `${frontendUrl}/change-password?token=${token}`;
       subject = 'Set your password for EventKonnect Vendor Account';
       body = `
