@@ -15,32 +15,33 @@ enum RSVPStatus {
 }
 
 model User {
-  id                String    @id @default(uuid())
-  username          String    @unique
-  email             String    @unique
+  id                String   @id @default(uuid())
+  username          String   @unique
+  email             String   @unique
   password          String
   phone             String?
-  companyName       String?   
+  companyName       String?
   address           String?
-  organisationName  String?   
-  companyWebsite    String?   
-  category          String?   
-  serviceArea       String?   
-  ticketType        String?   
+  organisationName  String?
+  companyWebsite    String?
+  category          String?
+  serviceArea       String?
+  ticketType        String?
   userToken         String?
-  isDeleted         Boolean   @default(false)
-  isProfileSet      Boolean   @default(false)
-  isSuspended       Boolean   @default(false)
-  isVerified        Boolean   @default(false)
+  isDeleted         Boolean  @default(false)
+  isProfileSet      Boolean  @default(false)
+  isSuspended       Boolean  @default(false)
+  isVerified        Boolean  @default(false)
   verificationToken String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  roleId            String?
-  role              Role?     @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  organizedEvents   Event[]   @relation("OrganizedEvents")
-  userEvents        Event[]   @relation("EventAttendees")
-}
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
+  roleId String?
+  role   Role?   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  organizedEvents Event[]         @relation("OrganizedEvents")
+  eventAttendees  EventAttendee[]
+}
 
 model Role {
   id        String   @id @default(uuid())
@@ -51,15 +52,31 @@ model Role {
 }
 
 model Event {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
+  images      Json?
   title       String
   description String?
   location    String
+  budget      Int  
   date        DateTime
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  status      String  @default("active")
   organizerId String
-  status       RSVPStatus @default(PENDING)
-  organizer   User      @relation("OrganizedEvents", fields: [organizerId], references: [id], onDelete: Cascade)
-  attendees   User[]    @relation("EventAttendees")
+  organizer   User   @relation("OrganizedEvents", fields: [organizerId], references: [id], onDelete: Cascade)
+  attendees EventAttendee[]
+}
+
+model EventAttendee {
+  id          String     @id @default(uuid())
+  eventId     String
+  userId      String
+  status      RSVPStatus @default(PENDING)
+  checkedInAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
 }

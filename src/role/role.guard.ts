@@ -20,9 +20,7 @@ export class RoleGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest();
     if (!user || !requiredRoles.includes(user.role)) {
-      throw new ForbiddenException(
-        'Only buyers are allowed to access this resource',
-      );
+      throw new ForbiddenException('Only allowed Role to access this resource');
     }
 
     return true;

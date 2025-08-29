@@ -6,6 +6,8 @@ import { PrimsaModule } from './primsa/primsa.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailModule } from './email/email.module';
 import { JwtModule } from '@nestjs/jwt';
+import { EventModule } from './event/event.module';
+import { EventAttendeeModule } from './event-attendee/event-attendee.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { JwtModule } from '@nestjs/jwt';
     AuthModule,
     MailModule,
     PrimsaModule,
+    EventModule,
+    EventAttendeeModule,
   ],
 
   controllers: [],

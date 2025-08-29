@@ -1,13 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsOptional } from 'class-validator';
 import { SignupDto } from './signup.dto';
-import { IsOptional, IsString } from 'class-validator';
-
+import { TicketType } from '../enums';
 export class AttendeeSignupDto extends SignupDto {
-  @IsString()
+  @IsEnum(TicketType, { message: 'Invalid ticket type' })
   @IsOptional()
-  @ApiProperty({
-    description: 'Ticket type (e.g., VIP, Regular)',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Ticket type for the attendee',
+    enum: TicketType,
+    example: TicketType.VIP,
   })
-  ticketType?: string;
+  ticketType?: TicketType;
 }
