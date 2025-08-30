@@ -168,6 +168,9 @@ export class AuthService {
       where: {
         email: dto.email,
       },
+      include: {
+        role: true,
+      },
     });
     if (!user) throw new ForbiddenException('User not found');
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);
@@ -175,7 +178,7 @@ export class AuthService {
     const token = this.jwt.sign({
       sub: user.id,
       email: user.email,
-      role: user.roleId,
+      role: user.role?.name,
     });
     return token;
   }
