@@ -25,7 +25,7 @@ import { loginDto } from 'src/utils/dtos';
   status: 500,
   description: 'Internal server error',
 })
-@Controller('api/v1/auth')
+@Controller('/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @ApiOperation({ summary: 'Register a new vendor' })
