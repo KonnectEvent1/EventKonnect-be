@@ -16,6 +16,7 @@ enum RSVPStatus {
 
 model User {
   id                String   @id @default(uuid())
+  avatar            String?
   username          String   @unique
   email             String   @unique
   password          String
@@ -24,7 +25,6 @@ model User {
   address           String?
   organisationName  String?
   companyWebsite    String?
-  category          String?
   serviceArea       String?
   ticketType        String?
   userToken         String?
@@ -35,12 +35,19 @@ model User {
   verificationToken String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  description       String?
+  services          String[] @default([])
+  pricing           Json?
+  portfolio         Json?
+  categories        String[] @default([])
 
-  roleId String?
-  role   Role?   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId            String?
+  role              Role?    @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
-  organizedEvents Event[]         @relation("OrganizedEvents")
-  eventAttendees  EventAttendee[]
+  organizedEvents   Event[]         @relation("OrganizedEvents")
+  eventAttendees    EventAttendee[]
+  reviewsWritten    Review[]        @relation("ReviewsWritten")
+  reviewsReceived   Review[]        @relation("ReviewsReceived")
 }
 
 model Role {
@@ -79,4 +86,17 @@ model EventAttendee {
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([eventId, userId])
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  reviewerId String
+  vendorId   String
+
+  reviewer   User     @relation("ReviewsWritten", fields: [reviewerId], references: [id], onDelete: Cascade)
+  vendor     User     @relation("ReviewsReceived", fields: [vendorId], references: [id], onDelete: Cascade)
 }

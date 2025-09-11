@@ -9,6 +9,7 @@ import { CloudinaryConfig } from './config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
+  app.setGlobalPrefix('api/v1');
   const ConfigDoc = new DocumentBuilder()
     .setTitle('Event Konnect')
     .setDescription(
@@ -31,10 +32,11 @@ async function bootstrap() {
     )
     .build();
   const document = SwaggerModule.createDocument(app, ConfigDoc);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api/docs', app, document);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   const configService = app.get(ConfigService);
   CloudinaryConfig(configService);
-  await app.listen(process.env.PORT ?? 5000);
+  const port = process.env.PORT ?? 5000;
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();
