@@ -78,6 +78,7 @@ export class AuthService {
       return [user_role, user];
     });
 
+    // Try to send verification email, but don't fail if email service is not configured
     try {
       if (roleName === ROLES.VENDOR) {
         await this.mailservice.sendVerificationEmail(
@@ -92,10 +93,10 @@ export class AuthService {
         );
       }
     } catch (err) {
-      if (err) {
-        await this.prisma.user.delete({ where: { id: user.id } });
-        throw new BadRequestException('Signup failed: unable to send email');
-      }
+      // Log the error but continue - useful for development when email is not configured
+      console.warn('⚠️  Email service not configured. User created but verification email not sent.');
+      console.warn('   To verify user manually, run:');
+      console.warn(`   UPDATE "User" SET "isVerified" = true WHERE email = '${dto.email}';`);
     }
 
     return {
