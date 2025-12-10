@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -15,7 +15,7 @@ enum RSVPStatus {
 }
 
 model User {
-  id                String   @id @default(uuid())
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
   avatar            String?
   username          String   @unique
   email             String   @unique
@@ -41,17 +41,17 @@ model User {
   portfolio         Json?
   categories        String[] @default([])
 
-  roleId            String?
-  role              Role?    @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId String? @db.ObjectId
+  role   Role?   @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
-  organizedEvents   Event[]         @relation("OrganizedEvents")
-  eventAttendees    EventAttendee[]
-  reviewsWritten    Review[]        @relation("ReviewsWritten")
-  reviewsReceived   Review[]        @relation("ReviewsReceived")
+  organizedEvents Event[]         @relation("OrganizedEvents")
+  eventAttendees  EventAttendee[]
+  reviewsWritten  Review[]        @relation("ReviewsWritten")
+  reviewsReceived Review[]        @relation("ReviewsReceived")
 }
 
 model Role {
-  id        String   @id @default(uuid())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String   @unique
   users     User[]
   createdAt DateTime @default(now())
@@ -59,44 +59,44 @@ model Role {
 }
 
 model Event {
-  id          String   @id @default(uuid())
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
   images      Json?
   title       String
   description String?
   location    String
-  budget      Int  
+  budget      Int
   date        DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  status      String  @default("active")
-  organizerId String
-  organizer   User   @relation("OrganizedEvents", fields: [organizerId], references: [id], onDelete: Cascade)
-  attendees EventAttendee[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  status      String          @default("active")
+  organizerId String          @db.ObjectId
+  organizer   User            @relation("OrganizedEvents", fields: [organizerId], references: [id], onDelete: Cascade)
+  attendees   EventAttendee[]
 }
 
 model EventAttendee {
-  id          String     @id @default(uuid())
-  eventId     String
-  userId      String
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  eventId     String     @db.ObjectId
+  userId      String     @db.ObjectId
   status      RSVPStatus @default(PENDING)
   checkedInAt DateTime?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event       Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([eventId, userId])
 }
 
 model Review {
-  id         String   @id @default(uuid())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   rating     Int
   comment    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  reviewerId String
-  vendorId   String
+  reviewerId String   @db.ObjectId
+  vendorId   String   @db.ObjectId
 
-  reviewer   User     @relation("ReviewsWritten", fields: [reviewerId], references: [id], onDelete: Cascade)
-  vendor     User     @relation("ReviewsReceived", fields: [vendorId], references: [id], onDelete: Cascade)
+  reviewer User @relation("ReviewsWritten", fields: [reviewerId], references: [id], onDelete: Cascade)
+  vendor   User @relation("ReviewsReceived", fields: [vendorId], references: [id], onDelete: Cascade)
 }
