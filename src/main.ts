@@ -11,7 +11,7 @@ async function bootstrap() {
   
   // Enable CORS for frontend
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://eventkonnect-fe-1.onrender.com'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
@@ -66,7 +66,7 @@ async function bootstrap() {
   console.log(`📚 API Documentation:        http://localhost:${port}/api/docs`);
   console.log(`🔗 API Base URL:             http://localhost:${port}/api/v1`);
   console.log(`⚡ Environment:              ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 CORS enabled for:         http://localhost:5173, http://localhost:3000`);
+  console.log(`🌐 CORS enabled for:         http://localhost:5173, http://localhost:3000, https://eventkonnect-fe-1.onrender.com`);
   console.log(`📅 Started at:               ${new Date().toLocaleString()}\n`);
   console.log('════════════════════════════════════════════════════════════════\n');
 }
