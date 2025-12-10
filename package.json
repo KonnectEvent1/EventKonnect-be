@@ -24,7 +24,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "jest --passWithNoTests",
     "tsc": "tsc",
-    "prepare": "husky install"
+    "prepare": "husky install || true"
   },
   "dependencies": {
     "@nestjs/class-validator": "^0.13.4",

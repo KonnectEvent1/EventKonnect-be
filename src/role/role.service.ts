@@ -9,11 +9,7 @@ export class RoleService {
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: {
-        role: {
-          update: {
-            id: newRoleId,
-          },
-        },
+        roleId: newRoleId,
       },
     });
 

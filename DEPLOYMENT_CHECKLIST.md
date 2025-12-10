@@ -30,14 +30,19 @@ DATABASE_URL=mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@YOUR_CLUSTER.mongodb.net/
 DATABASE_URL=mongodb+srv://admin:MyP@ssw0rd@cluster0.abc123.mongodb.net/eventKonnect?retryWrites=true&w=majority
 ```
 
-### Step 2: Verify Build Command
+### Step 2: Verify Build & Start Commands
 
-Your Render build command should be:
+Your Render configuration should be:
+
+**Build Command:**
 ```bash
-npm install
+npm install && npx prisma generate && npm run build
 ```
 
-The `postinstall` script will automatically run `prisma generate` after install.
+**Start Command:**
+```bash
+npm run start:prod
+```
 
 ### Step 3: Deploy
 
