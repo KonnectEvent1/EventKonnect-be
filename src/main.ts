@@ -34,6 +34,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, ConfigDoc);
   SwaggerModule.setup('api/docs', app, document);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.enableCors({
+    origin: ['http://localhost:5173', 'http://localhost:5000'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 204,
+  });
   const configService = app.get(ConfigService);
   CloudinaryConfig(configService);
   const port = process.env.PORT ?? 5000;

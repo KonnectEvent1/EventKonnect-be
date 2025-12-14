@@ -78,25 +78,26 @@ export class AuthService {
       return [user_role, user];
     });
 
-    try {
-      if (roleName === ROLES.VENDOR) {
-        await this.mailservice.sendVerificationEmail(
-          dto.email,
-          verificationToken,
-          roleName,
-        );
-      } else {
-        await this.mailservice.sendVerificationEmail(
-          dto.email,
-          verificationToken,
-        );
-      }
-    } catch (err) {
-      if (err) {
-        await this.prisma.user.delete({ where: { id: user.id } });
-        throw new BadRequestException('Signup failed: unable to send email');
-      }
-    }
+    // try {
+    //   if (roleName === ROLES.VENDOR) {
+    //     await this.mailservice.sendVerificationEmail(
+    //       dto.email,
+    //       verificationToken,
+    //       roleName,
+    //     );
+    //   } else {
+    //     await this.mailservice.sendVerificationEmail(
+    //       dto.email,
+    //       verificationToken,
+    //     );
+    //   }
+    // } catch (err) {
+    //   console.log(err,"Send Grid Error")
+    //   if (err) {
+    //     await this.prisma.user.delete({ where: { id: user.id } });
+    //     throw new BadRequestException('Signup failed: unable to send email');
+    //   }
+    // }
 
     return {
       message:
