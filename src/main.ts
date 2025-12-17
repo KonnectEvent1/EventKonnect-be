@@ -56,18 +56,5 @@ async function bootstrap() {
   const port = process.env.PORT ?? 5000;
   await app.listen(port, '0.0.0.0');
 
-  // Startup Success Message
-  console.log('\n╔════════════════════════════════════════════════════════════════╗');
-  console.log('║                                                                ║');
-  console.log('║          🚀 EventKonnect API Started Successfully! 🚀          ║');
-  console.log('║                                                                ║');
-  console.log('╚════════════════════════════════════════════════════════════════╝\n');
-  console.log(`📍 Server running on:        http://localhost:${port}`);
-  console.log(`📚 API Documentation:        http://localhost:${port}/api/docs`);
-  console.log(`🔗 API Base URL:             http://localhost:${port}/api/v1`);
-  console.log(`⚡ Environment:              ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 CORS enabled for:         http://localhost:5173, http://localhost:3000, https://eventkonnect-fe-1.onrender.com`);
-  console.log(`📅 Started at:               ${new Date().toLocaleString()}\n`);
-  console.log('════════════════════════════════════════════════════════════════\n');
 }
 bootstrap();
