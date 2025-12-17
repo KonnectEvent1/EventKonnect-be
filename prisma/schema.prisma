@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,7 +15,7 @@ enum RSVPStatus {
 }
 
 model User {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                String   @id @default(uuid())
   avatar            String?
   username          String   @unique
   email             String   @unique
@@ -41,7 +41,7 @@ model User {
   portfolio         Json?
   categories        String[] @default([])
 
-  roleId String? @db.ObjectId
+  roleId String?
   role   Role?   @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   organizedEvents Event[]         @relation("OrganizedEvents")
@@ -51,7 +51,7 @@ model User {
 }
 
 model Role {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   name      String   @unique
   users     User[]
   createdAt DateTime @default(now())
@@ -59,7 +59,7 @@ model Role {
 }
 
 model Event {
-  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  id          String          @id @default(uuid())
   images      Json?
   title       String
   description String?
@@ -69,15 +69,15 @@ model Event {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   status      String          @default("active")
-  organizerId String          @db.ObjectId
+  organizerId String
   organizer   User            @relation("OrganizedEvents", fields: [organizerId], references: [id], onDelete: Cascade)
   attendees   EventAttendee[]
 }
 
 model EventAttendee {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  eventId     String     @db.ObjectId
-  userId      String     @db.ObjectId
+  id          String     @id @default(uuid())
+  eventId     String
+  userId      String
   status      RSVPStatus @default(PENDING)
   checkedInAt DateTime?
   createdAt   DateTime   @default(now())
@@ -89,13 +89,13 @@ model EventAttendee {
 }
 
 model Review {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String   @id @default(uuid())
   rating     Int
   comment    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  reviewerId String   @db.ObjectId
-  vendorId   String   @db.ObjectId
+  reviewerId String
+  vendorId   String
 
   reviewer User @relation("ReviewsWritten", fields: [reviewerId], references: [id], onDelete: Cascade)
   vendor   User @relation("ReviewsReceived", fields: [vendorId], references: [id], onDelete: Cascade)
